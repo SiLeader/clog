@@ -52,9 +52,18 @@ class Logger : public LoggerBase {
  public:
   void write(Level level, const std::string& tag,
              const std::string& message) override {
+    if (level < this->level()) {
+      return;
+    }
     for (auto& logger : internalLogger_) {
       logger->write(level, tag, message);
     }
+  }
+
+ public:
+  static Logger& GetLogger() {
+    static Logger logger;
+    return logger;
   }
 };
 

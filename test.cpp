@@ -16,20 +16,22 @@
 
 #include <clog/logger.hpp>
 #include <clog/loggers/stdout.hpp>
+#include <clog/loggers/syslog.hpp>
 
 int main() {
-  clog::Logger logger;
+  clog::Logger& logger = clog::Logger::GetLogger();
   logger.addLogger<clog::loggers::StdoutLogger>();
+  logger.addLogger<clog::loggers::SyslogLogger>("clog");
 
   const std::string TAG = "tag";
-  logger.emergency(TAG, "emergency");
-  logger.alert(TAG, "alert");
-  logger.critical(TAG, "critical");
-  logger.error(TAG, "error");
-  logger.warning(TAG, "warning");
-  logger.notice(TAG, "notice");
-  logger.info(TAG, "info");
-  logger.debug(TAG, "debug");
+  logger.emergency(TAG, "emergency log");
+  logger.alert(TAG, "alert log");
+  logger.critical(TAG, "critical log");
+  logger.error(TAG, "error log");
+  logger.warning(TAG, "warning log");
+  logger.notice(TAG, "notice log");
+  logger.info(TAG, "info log");
+  logger.debug(TAG, "debug log");
 
   logger.info(TAG, "int: ", 42, ", double: ", 3.14, ", string: ", TAG);
   return 0;

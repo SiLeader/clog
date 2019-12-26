@@ -27,38 +27,16 @@ class StdoutLogger : public LoggerBase {
  public:
   void write(Level level, const std::string& tag,
              const std::string& message) override {
+    if (level < this->level()) {
+      return;
+    }
     auto tp = std::chrono::system_clock::now();
     auto t = std::chrono::system_clock::to_time_t(tp);
     auto tm = std::localtime(&t);
 
     std::string messagePrefix;
-
-    switch (level) {
-      case Level::kEmergency:
-        messagePrefix += "e/";
-        break;
-      case Level::kAlert:
-        messagePrefix += "A/";
-        break;
-      case Level::kCritical:
-        messagePrefix += "C/";
-        break;
-      case Level::kError:
-        messagePrefix += "E/";
-        break;
-      case Level::kWarning:
-        messagePrefix += "W/";
-        break;
-      case Level::kNotice:
-        messagePrefix += "N/";
-        break;
-      case Level::kInfo:
-        messagePrefix += "I/";
-        break;
-      case Level::kDebug:
-        messagePrefix += "D/";
-        break;
-    }
+    messagePrefix += static_cast<char>(level);
+    messagePrefix += '/';
 
     messagePrefix += tag;
 

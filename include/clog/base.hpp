@@ -47,24 +47,58 @@ std::string FragmentsToMessageString(MessageFragmentsT&&... messageFragments) {
 
 }  // namespace detail
 
-enum class Level {
-  kEmergency,
-  kAlert,
-  kCritical,
-  kError,
-  kWarning,
-  kNotice,
-  kInfo,
-  kDebug,
+enum class Level : char {
+  kEmergency = 'e',
+  kAlert = 'A',
+  kCritical = 'C',
+  kError = 'E',
+  kWarning = 'W',
+  kNotice = 'N',
+  kInfo = 'I',
+  kDebug = 'D',
 };
 
+inline bool operator<(Level lhs, Level rhs) {
+  static auto toLevelInt = [](Level l) noexcept {
+    switch (l) {
+      case Level::kEmergency:
+        return 7;
+      case Level::kAlert:
+        return 6;
+      case Level::kCritical:
+        return 5;
+      case Level::kError:
+        return 4;
+      case Level::kWarning:
+        return 3;
+      case Level::kNotice:
+        return 2;
+      case Level::kInfo:
+        return 1;
+      case Level::kDebug:
+        return 0;
+    }
+  };
+
+  auto lhsInt = toLevelInt(lhs);
+  auto rhsInt = toLevelInt(rhs);
+
+  return lhsInt < rhsInt;
+}
+
 class LoggerBase {
+ private:
+  Level logLevel_ = Level::kInfo;
+
  public:
   virtual ~LoggerBase() = default;
 
  public:
   virtual void write(Level level, const std::string& tag,
                      const std::string& message) = 0;
+
+  void level(Level level) noexcept { logLevel_ = level; }
+  Level level() const noexcept { return logLevel_; }
 
  public:
   template <class... MessageFragmentsT>
